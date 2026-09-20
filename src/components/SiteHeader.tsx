@@ -36,7 +36,7 @@ export function SiteHeader() {
           {user ? (
             <div className="flex items-center gap-2">
               <span className="hidden text-sm text-muted-foreground sm:block">
-                {user.user_metadata?.full_name ?? user.email}
+                {(user.user_metadata?.["full_name"] as string | undefined) ?? user.email}
               </span>
               <Button variant="ghost" size="sm" onClick={handleSignOut}>
                 Sign out
