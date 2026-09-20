@@ -20,3 +20,14 @@ export function useSession() {
 
   return { session, user: session?.user ?? null, loading };
 }
+
+export function profileOf(user: { email?: string; user_metadata?: Record<string, unknown> } | null) {
+  const meta = (user?.user_metadata ?? {}) as Record<string, unknown>;
+  const name =
+    (meta["full_name"] as string | undefined) ??
+    (meta["name"] as string | undefined) ??
+    (user?.email?.split("@")[0] ?? "Member");
+  const avatar =
+    (meta["avatar_url"] as string | undefined) ?? (meta["picture"] as string | undefined) ?? null;
+  return { name, avatar, email: user?.email ?? "" };
+}
