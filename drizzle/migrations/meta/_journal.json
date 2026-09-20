@@ -8,6 +8,13 @@
       "when": 1789904580293,
       "tag": "0000_create_masterclass_listings",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1789904819944,
+      "tag": "0001_seed_sample_listings",
+      "breakpoints": true
     }
   ]
 }

@@ -31,7 +31,7 @@ export type Database = {
           start_date: string | null
           subcategory: string | null
           title: string
-          user_id: string
+          user_id: string | null
         }
         Insert: {
           about_master?: string
@@ -49,7 +49,7 @@ export type Database = {
           start_date?: string | null
           subcategory?: string | null
           title: string
-          user_id?: string
+          user_id?: string | null
         }
         Update: {
           about_master?: string
@@ -67,7 +67,7 @@ export type Database = {
           start_date?: string | null
           subcategory?: string | null
           title?: string
-          user_id?: string
+          user_id?: string | null
         }
         Relationships: []
       }
