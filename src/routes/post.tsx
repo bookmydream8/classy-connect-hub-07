@@ -1,8 +1,9 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Globe, MapPin, Trophy } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { SiteHeader } from "@/components/SiteHeader";
+import { AppShell, TopBar } from "@/components/AppShell";
 import { useSession } from "@/lib/useSession";
 import {
   CATEGORIES,
@@ -12,9 +13,7 @@ import {
   type CategoryId,
   type ListingType,
 } from "@/lib/taxonomy";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
 export const Route = createFileRoute("/post")({
@@ -23,14 +22,12 @@ export const Route = createFileRoute("/post")({
       { title: "Post a class — Madhura Masterclass Board" },
       {
         name: "description",
-        content:
-          "List a physical class, an online class or a competition for learners across India.",
+        content: "List a physical class, an online class or a competition for learners across India.",
       },
       { property: "og:title", content: "Post a class — Madhura Masterclass Board" },
       {
         property: "og:description",
-        content:
-          "List a physical class, an online class or a competition for learners across India.",
+        content: "List a physical class, an online class or a competition for learners across India.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -39,7 +36,10 @@ export const Route = createFileRoute("/post")({
   component: PostPage,
 });
 
-const fieldClass = "mt-1";
+const inputCls = "h-12 rounded-xl border-input bg-card";
+const selectCls =
+  "h-12 w-full rounded-xl border border-input bg-card px-3 text-sm outline-none";
+const textareaCls = "rounded-xl border-input bg-card";
 
 function PostPage() {
   const { user, loading } = useSession();
@@ -69,7 +69,7 @@ function PostPage() {
 
   const mutation = useMutation({
     mutationFn: async () => {
-      const { data, error } = await supabase
+      const { data, error: insertError } = await supabase
         .from("listings")
         .insert({
           user_id: user!.id,
@@ -89,254 +89,259 @@ function PostPage() {
         })
         .select("id")
         .single();
-      if (error) throw error;
+      if (insertError) throw insertError;
       return data;
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["listings"] });
+      queryClient.invalidateQueries({ queryKey: ["my-listings"] });
       navigate({ to: "/class/$id", params: { id: data.id } });
     },
     onError: () => setError("Could not publish. Please check the fields and try again."),
   });
 
+  const header = <TopBar title="Post a class" subtitle="Takes a minute" backTo="/" />;
+
   if (!loading && !user) {
     return (
-      <div className="min-h-screen">
-        <SiteHeader />
-        <main className="mx-auto max-w-md px-4 py-20">
-          <div className="surface-card p-8 text-center">
-            <h1 className="font-display text-2xl">Sign in to post</h1>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Only signed-in members can add a class or competition.
+      <AppShell active="post" header={header}>
+        <div className="px-4 py-8">
+          <div className="surface-card p-6 text-center">
+            <span className="mx-auto grid size-14 place-items-center rounded-2xl bg-marigold font-display text-xl">
+              म
+            </span>
+            <h2 className="mt-3 font-display text-xl">Sign in to post</h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Only signed-in members can add a class, an online session or a competition.
             </p>
-            <Button asChild className="mt-6 w-full">
-              <Link to="/auth">Continue with Google</Link>
-            </Button>
+            <Link
+              to="/auth"
+              className="tap mt-5 block h-12 rounded-xl bg-primary text-center leading-12 text-sm font-semibold text-primary-foreground"
+            >
+              Continue with Google
+            </Link>
           </div>
-        </main>
-      </div>
+        </div>
+      </AppShell>
     );
   }
 
   return (
-    <div className="min-h-screen">
-      <SiteHeader />
-      <main className="mx-auto max-w-2xl px-4 py-8">
-        <h1 className="font-display text-3xl">Post a class</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Share a physical class, an online class or a competition.
-        </p>
-
-        <form
-          className="surface-card mt-6 space-y-5 p-6"
-          onSubmit={(e) => {
-            e.preventDefault();
-            setError(null);
-            if (!title.trim()) {
-              setError("Please add a class name.");
-              return;
-            }
-            mutation.mutate();
-          }}
-        >
-          <div>
-            <Label>Type</Label>
-            <div className={`flex flex-wrap gap-2 ${fieldClass}`}>
-              {LISTING_TYPES.map((t) => (
+    <AppShell active="post" header={header}>
+      <form
+        className="space-y-4 px-4 pt-4"
+        onSubmit={(e) => {
+          e.preventDefault();
+          setError(null);
+          if (!title.trim()) {
+            setError("Please add a class name.");
+            return;
+          }
+          mutation.mutate();
+        }}
+      >
+        <Card title="What are you posting?">
+          <div className="grid grid-cols-3 gap-2">
+            {LISTING_TYPES.map((t) => {
+              const Icon = t.id === "online" ? Globe : t.id === "competition" ? Trophy : MapPin;
+              const on = listingType === t.id;
+              return (
                 <button
-                  type="button"
                   key={t.id}
+                  type="button"
                   onClick={() => setListingType(t.id)}
-                  className={`rounded-full px-3.5 py-1.5 text-xs font-medium transition-colors ${
-                    listingType === t.id
-                      ? "bg-foreground text-background"
-                      : "bg-secondary text-secondary-foreground hover:bg-accent"
+                  className={`tap flex flex-col items-center gap-1.5 rounded-2xl border px-2 py-3 text-[11px] font-medium transition-colors ${
+                    on
+                      ? "border-primary bg-primary/10 text-foreground"
+                      : "border-border bg-background text-muted-foreground"
                   }`}
                 >
-                  {t.label}
+                  <Icon className="size-5" strokeWidth={on ? 2.4 : 1.9} />
+                  {t.label.replace(" class", "")}
                 </button>
-              ))}
-            </div>
+              );
+            })}
           </div>
+        </Card>
 
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div>
-              <Label htmlFor="category">Category</Label>
-              <select
-                id="category"
-                className={`h-10 w-full rounded-md border border-input bg-background px-3 text-sm ${fieldClass}`}
-                value={category}
-                onChange={(e) => {
-                  setCategory(e.target.value as CategoryId);
+        <Card title="Focus">
+          <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+            {CATEGORIES.map((c) => (
+              <button
+                key={c.id}
+                type="button"
+                onClick={() => {
+                  setCategory(c.id);
                   setSubcategory("");
                 }}
+                className={`tap shrink-0 rounded-full px-3.5 py-2 text-xs font-medium transition-colors ${
+                  category === c.id
+                    ? "bg-foreground text-background"
+                    : "bg-secondary text-secondary-foreground"
+                }`}
               >
-                {CATEGORIES.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <Label htmlFor="subcategory">Focus</Label>
-              <select
-                id="subcategory"
-                className={`h-10 w-full rounded-md border border-input bg-background px-3 text-sm ${fieldClass}`}
-                value={subcategory}
-                onChange={(e) => setSubcategory(e.target.value)}
+                {c.label}
+              </button>
+            ))}
+          </div>
+          <select
+            aria-label="Specific focus"
+            className={selectCls}
+            value={subcategory}
+            onChange={(e) => setSubcategory(e.target.value)}
+          >
+            <option value="">Any {CATEGORIES.find((c) => c.id === category)?.label.toLowerCase()}</option>
+            {subOptions.map((o) => (
+              <option key={o} value={o}>
+                {o}
+              </option>
+            ))}
+          </select>
+        </Card>
+
+        <Card title="Class details">
+          <Input
+            aria-label="Class name"
+            className={inputCls}
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Class name — e.g. Tabla foundations"
+          />
+          <Textarea
+            aria-label="Description"
+            className={textareaCls}
+            rows={4}
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="What learners cover, weekly schedule, level…"
+          />
+          <Textarea
+            aria-label="About the master"
+            className={textareaCls}
+            rows={3}
+            value={aboutMaster}
+            onChange={(e) => setAboutMaster(e.target.value)}
+            placeholder="About the master / teacher — name, training, years…"
+          />
+        </Card>
+
+        <Card title="Cover image">
+          <Input
+            aria-label="Image link"
+            className={inputCls}
+            value={imageUrl}
+            onChange={(e) => setImageUrl(e.target.value)}
+            placeholder="Paste an image link (optional)"
+            inputMode="url"
+          />
+          {imageUrl ? (
+            <img
+              src={imageUrl}
+              alt=""
+              className="h-32 w-full rounded-xl border border-border object-cover"
+            />
+          ) : (
+            <p className="text-xs text-muted-foreground">
+              No link? We'll show a Madhura cover instead.
+            </p>
+          )}
+        </Card>
+
+        <Card title="Pricing">
+          <div className="grid grid-cols-2 gap-2">
+            {[true, false].map((free) => (
+              <button
+                key={String(free)}
+                type="button"
+                onClick={() => setIsFree(free)}
+                className={`tap h-11 rounded-xl border text-sm font-medium transition-colors ${
+                  isFree === free
+                    ? "border-primary bg-primary/10 text-foreground"
+                    : "border-border bg-background text-muted-foreground"
+                }`}
               >
-                <option value="">Any</option>
-                {subOptions.map((o) => (
-                  <option key={o} value={o}>
-                    {o}
-                  </option>
-                ))}
-              </select>
-            </div>
+                {free ? "Free" : "Paid"}
+              </button>
+            ))}
           </div>
-
-          <div>
-            <Label htmlFor="title">Class name</Label>
+          {!isFree ? (
             <Input
-              id="title"
-              className={fieldClass}
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="Tabla foundations — 6 week course"
+              aria-label="Price in rupees"
+              type="number"
+              min="0"
+              inputMode="numeric"
+              className={inputCls}
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+              placeholder="Price in ₹"
             />
-          </div>
-
-          <div>
-            <Label htmlFor="description">Description</Label>
-            <Textarea
-              id="description"
-              className={fieldClass}
-              rows={4}
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="What learners will cover, schedule, level…"
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="master">About the master / teacher</Label>
-            <Textarea
-              id="master"
-              className={fieldClass}
-              rows={3}
-              value={aboutMaster}
-              onChange={(e) => setAboutMaster(e.target.value)}
-              placeholder="Name, training, years of experience…"
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="image">Image link</Label>
-            <Input
-              id="image"
-              className={fieldClass}
-              value={imageUrl}
-              onChange={(e) => setImageUrl(e.target.value)}
-              placeholder="https://… (optional)"
-            />
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div>
-              <Label>Pricing</Label>
-              <div className={`flex gap-2 ${fieldClass}`}>
-                {[true, false].map((free) => (
-                  <button
-                    type="button"
-                    key={String(free)}
-                    onClick={() => setIsFree(free)}
-                    className={`rounded-full px-3.5 py-1.5 text-xs font-medium transition-colors ${
-                      isFree === free
-                        ? "bg-foreground text-background"
-                        : "bg-secondary text-secondary-foreground hover:bg-accent"
-                    }`}
-                  >
-                    {free ? "Free" : "Paid"}
-                  </button>
-                ))}
-              </div>
-            </div>
-            {!isFree ? (
-              <div>
-                <Label htmlFor="price">Price (₹)</Label>
-                <Input
-                  id="price"
-                  type="number"
-                  min="0"
-                  className={fieldClass}
-                  value={price}
-                  onChange={(e) => setPrice(e.target.value)}
-                />
-              </div>
-            ) : null}
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div>
-              <Label htmlFor="start">Start date</Label>
-              <Input
-                id="start"
-                type="date"
-                className={fieldClass}
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-              />
-            </div>
-            <div>
-              <Label htmlFor="end">End date</Label>
-              <Input
-                id="end"
-                type="date"
-                className={fieldClass}
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-              />
-            </div>
-          </div>
-
-          {needsPlace ? (
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div>
-                <Label htmlFor="city">City</Label>
-                <select
-                  id="city"
-                  className={`h-10 w-full rounded-md border border-input bg-background px-3 text-sm ${fieldClass}`}
-                  value={city}
-                  onChange={(e) => setCity(e.target.value)}
-                >
-                  {CITIES.map((c) => (
-                    <option key={c} value={c}>
-                      {c}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <Label htmlFor="map">Google Maps link</Label>
-                <Input
-                  id="map"
-                  className={fieldClass}
-                  value={mapLocation}
-                  onChange={(e) => setMapLocation(e.target.value)}
-                  placeholder="https://maps.google.com/…"
-                />
-              </div>
-            </div>
           ) : null}
+        </Card>
 
-          {error ? <p className="text-sm text-destructive">{error}</p> : null}
+        <Card title="Dates">
+          <div className="grid grid-cols-2 gap-2">
+            <Input
+              aria-label="Start date"
+              type="date"
+              className={inputCls}
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+            />
+            <Input
+              aria-label="End date"
+              type="date"
+              className={inputCls}
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+            />
+          </div>
+        </Card>
 
-          <Button type="submit" className="w-full" disabled={mutation.isPending}>
+        {needsPlace ? (
+          <Card title="Where">
+            <select
+              aria-label="City"
+              className={selectCls}
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
+            >
+              {CITIES.map((c) => (
+                <option key={c} value={c}>
+                  {c}
+                </option>
+              ))}
+            </select>
+            <Input
+              aria-label="Google Maps link"
+              className={inputCls}
+              value={mapLocation}
+              onChange={(e) => setMapLocation(e.target.value)}
+              placeholder="Google Maps link to the venue"
+              inputMode="url"
+            />
+          </Card>
+        ) : null}
+
+        <div className="sticky bottom-0 z-10 -mx-4 border-t border-border bg-paper/95 px-4 py-3 backdrop-blur-xl">
+          {error ? <p className="mb-2 text-center text-xs text-destructive">{error}</p> : null}
+          <button
+            type="submit"
+            disabled={mutation.isPending}
+            className="tap h-12 w-full rounded-xl bg-primary text-sm font-semibold text-primary-foreground disabled:opacity-60"
+          >
             {mutation.isPending ? "Publishing…" : "Publish listing"}
-          </Button>
-        </form>
-      </main>
-    </div>
+          </button>
+        </div>
+      </form>
+    </AppShell>
+  );
+}
+
+function Card({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <section className="surface-card p-4">
+      <h2 className="chip-label mb-3">{title}</h2>
+      <div className="space-y-3">{children}</div>
+    </section>
   );
 }

@@ -178,3 +178,35 @@
   letter-spacing: 0.16em;
   color: var(--color-muted-foreground);
 }
+
+/* Stage behind the phone-shaped app column on larger screens. */
+@utility app-stage {
+  background-color: color-mix(in oklch, var(--color-foreground) 9%, var(--color-background));
+  background-image: radial-gradient(
+      circle at 18% 10%,
+      oklch(0.86 0.08 78 / 0.6),
+      transparent 46%
+    ),
+    radial-gradient(circle at 84% 90%, oklch(0.88 0.05 150 / 0.45), transparent 46%);
+}
+
+@utility no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@utility safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+@utility safe-top {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+@utility tap {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
