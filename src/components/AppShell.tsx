@@ -8,9 +8,9 @@ export type AppTab = "board" | "post" | "profile";
 interface AppShellProps {
   active: AppTab;
   children: ReactNode;
-  header?: ReactNode;
-  footer?: ReactNode;
-  overlay?: ReactNode;
+  header?: ReactNode | undefined;
+  footer?: ReactNode | undefined;
+  overlay?: ReactNode | undefined;
   showTabs?: boolean;
 }
 
@@ -94,9 +94,9 @@ function TabButton({
 
 interface TopBarProps {
   title: string;
-  subtitle?: string;
+  subtitle?: string | undefined;
   backTo: "/" | "/post" | "/profile";
-  action?: ReactNode;
+  action?: ReactNode | undefined;
 }
 
 export function TopBar({ title, subtitle, backTo, action }: TopBarProps) {
