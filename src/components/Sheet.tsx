@@ -31,7 +31,7 @@ export function Sheet({ open, onClose, title, children, footer }: SheetProps) {
             <h2 className="font-display text-xl">{title}</h2>
             <button
               onClick={onClose}
-              aria-label="Close"
+              aria-label="Dismiss filters"
               className="tap grid size-8 place-items-center rounded-full bg-secondary text-muted-foreground"
             >
               <X className="size-4" />
