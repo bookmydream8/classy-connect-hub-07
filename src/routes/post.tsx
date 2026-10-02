@@ -36,10 +36,10 @@ export const Route = createFileRoute("/post")({
   component: PostPage,
 });
 
-const inputCls = "h-12 rounded-xl border-input bg-card";
+const inputCls = "h-12 rounded-lg border-input bg-paper/85";
 const selectCls =
-  "h-12 w-full rounded-xl border border-input bg-card px-3 text-sm outline-none";
-const textareaCls = "rounded-xl border-input bg-card";
+  "h-12 w-full rounded-lg border border-input bg-paper/85 px-3 text-sm outline-none";
+const textareaCls = "rounded-lg border-input bg-paper/85";
 
 function PostPage() {
   const { user, loading } = useSession();
@@ -129,7 +129,7 @@ function PostPage() {
   return (
     <AppShell active="post" header={header}>
       <form
-        className="space-y-4 px-4 pt-4"
+        className="space-y-5 px-5 pt-5"
         onSubmit={(e) => {
           e.preventDefault();
           setError(null);
@@ -322,7 +322,7 @@ function PostPage() {
           </Card>
         ) : null}
 
-        <div className="sticky bottom-0 z-10 -mx-4 border-t border-border bg-paper/95 px-4 py-3 backdrop-blur-xl">
+        <div className="sticky bottom-0 z-10 -mx-5 border-t border-border bg-paper/95 px-5 py-3 backdrop-blur-xl">
           {error ? <p className="mb-2 text-center text-xs text-destructive">{error}</p> : null}
           <button
             type="submit"
@@ -339,8 +339,8 @@ function PostPage() {
 
 function Card({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section className="surface-card p-4">
-      <h2 className="chip-label mb-3">{title}</h2>
+    <section className="surface-card p-5">
+      <h2 className="mb-4 font-display text-[16px]">{title}</h2>
       <div className="space-y-3">{children}</div>
     </section>
   );

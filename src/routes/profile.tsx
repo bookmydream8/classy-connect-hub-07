@@ -70,7 +70,7 @@ function ProfilePage() {
 
   return (
     <AppShell active="profile" header={<TopBar title="Profile" subtitle="Madhura" backTo="/" />}>
-      <div className="px-4 py-4">
+      <div className="px-5 py-6">
         {loading ? (
           <p className="text-sm text-muted-foreground">Loading your profile…</p>
         ) : !user ? (
@@ -105,7 +105,7 @@ function ProfilePage() {
               </div>
             </div>
 
-            <div className="mt-6 flex items-center justify-between">
+            <div className="mt-8 flex items-center justify-between">
               <h2 className="font-display text-lg">My listings</h2>
               <Link to="/post" className="text-xs font-medium text-primary">
                 Post new

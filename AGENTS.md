@@ -8,3 +8,6 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+## App design structure
+- Keep the mobile phone-frame shell and shared semantic theme tokens as the source of visual styling across every route; this keeps the discovery, posting and account screens cohesive.

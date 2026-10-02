@@ -52,9 +52,9 @@ function AuthPage() {
 
   return (
     <AppShell active="board" showTabs={false}>
-      <div className="flex min-h-full flex-col px-6 py-8">
+      <div className="flex min-h-full flex-col px-7 py-9">
         <div className="flex items-center gap-2.5">
-          <span className="grid size-11 place-items-center rounded-2xl bg-marigold font-display text-xl font-semibold text-foreground">
+          <span className="grid size-11 place-items-center rounded-full bg-marigold font-display text-xl font-semibold text-foreground">
             म
           </span>
           <span className="leading-tight">
@@ -63,8 +63,8 @@ function AuthPage() {
           </span>
         </div>
 
-        <div className="mt-10">
-          <h1 className="font-display text-[28px] leading-tight">
+        <div className="mt-16">
+          <h1 className="font-display text-[28px] leading-snug">
             Teach what you know.
             <br />
             Find your next master.
@@ -90,7 +90,7 @@ function AuthPage() {
           </ul>
         </div>
 
-        <div className="mt-auto pt-10">
+        <div className="mt-auto pt-14">
           <button
             onClick={signIn}
             disabled={busy}
