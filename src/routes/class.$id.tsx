@@ -144,12 +144,12 @@ function ClassDetail() {
             alt={data.title}
             className="aspect-[4/3] w-full object-cover"
           />
-          <div className="px-4 py-4 pb-8">
+          <div className="px-5 py-6 pb-8">
             <div className="chip-label">
               {typeLabel(data.listing_type)} · {categoryLabel(data.category)}
               {data.subcategory ? ` · ${data.subcategory}` : ""}
             </div>
-            <h2 className="mt-2 font-display text-2xl leading-snug">{data.title}</h2>
+            <h2 className="mt-3 font-display text-2xl leading-snug">{data.title}</h2>
 
             <div className="mt-4 grid grid-cols-3 gap-2">
               <Stat label="Price" value={formatPrice(data.is_free, data.price)} />
@@ -161,8 +161,8 @@ function ClassDetail() {
             </div>
 
             {data.description ? (
-              <section className="surface-card mt-4 p-4">
-                <h3 className="chip-label mb-2">
+              <section className="mt-7 border-t border-border pt-5">
+                <h3 className="mb-3 font-display text-lg">
                   About this {data.listing_type === "competition" ? "competition" : "class"}
                 </h3>
                 <p className="whitespace-pre-line text-sm leading-relaxed text-muted-foreground">
@@ -172,8 +172,8 @@ function ClassDetail() {
             ) : null}
 
             {data.about_master ? (
-              <section className="surface-card mt-4 p-4">
-                <h3 className="chip-label mb-2">About the master</h3>
+              <section className="mt-7 border-t border-border pt-5">
+                <h3 className="mb-3 font-display text-lg">About the master</h3>
                 <p className="whitespace-pre-line text-sm leading-relaxed text-muted-foreground">
                   {data.about_master}
                 </p>
@@ -181,8 +181,8 @@ function ClassDetail() {
             ) : null}
 
             {data.map_location ? (
-              <section className="surface-card mt-4 p-4">
-                <h3 className="chip-label mb-2">Venue</h3>
+              <section className="mt-7 border-t border-border pt-5">
+                <h3 className="mb-3 font-display text-lg">Venue</h3>
                 <a
                   href={data.map_location}
                   target="_blank"
