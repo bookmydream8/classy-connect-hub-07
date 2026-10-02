@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { AppShell } from "@/components/AppShell";
 import { Sheet } from "@/components/Sheet";
 import { ListingCard, type Listing } from "@/components/ListingCard";
+import { Button } from "@/components/ui/button";
 import { profileOf, useSession } from "@/lib/useSession";
 import {
   CATEGORIES,
@@ -94,13 +95,13 @@ function Home() {
   }
 
   const header = (
-    <header className="safe-top z-30 flex-none border-b border-border bg-paper/90 backdrop-blur-xl">
-      <div className="flex items-center gap-2.5 px-4 pt-3 pb-2">
-        <span className="grid size-9 place-items-center rounded-xl bg-marigold font-display text-lg font-semibold text-foreground">
+    <header className="safe-top z-30 flex-none bg-paper/75 backdrop-blur-xl">
+      <div className="flex items-center gap-3 px-6 pt-6 pb-5">
+        <span className="grid size-10 place-items-center rounded-full bg-marigold font-display text-lg font-semibold text-foreground">
           म
         </span>
         <span className="leading-tight">
-          <span className="block font-display text-lg font-semibold">Madhura</span>
+          <span className="block font-display text-[22px] leading-snug">Madhura</span>
           <span className="chip-label block">Masterclass board</span>
         </span>
         <div className="ml-auto">
@@ -108,22 +109,22 @@ function Home() {
             <Link
               to="/profile"
               aria-label="Your profile"
-              className="tap grid size-9 place-items-center overflow-hidden rounded-full border border-border bg-secondary font-display text-sm"
+              className="tap grid size-10 place-items-center overflow-hidden rounded-full border border-border bg-secondary font-display text-sm"
             >
               {avatar ? <img src={avatar} alt="" className="size-full object-cover" /> : name.slice(0, 1).toUpperCase()}
             </Link>
           ) : (
             <Link
               to="/auth"
-              className="tap rounded-full bg-foreground px-3.5 py-2 text-xs font-medium text-background"
+              className="tap rounded-full bg-primary px-4 py-2 text-xs font-medium text-primary-foreground"
             >
               Sign in
             </Link>
           )}
         </div>
       </div>
-      <div className="px-4 pb-3">
-        <div className="flex h-11 items-center gap-2 rounded-2xl border border-input bg-card px-3.5">
+      <div className="px-6 pb-5">
+        <div className="flex h-12 items-center gap-2 rounded-lg border border-input bg-paper/80 px-3.5 shadow-card">
           <Search className="size-4 shrink-0 text-muted-foreground" />
           <input
             value={query}
@@ -132,9 +133,9 @@ function Home() {
             className="w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
           />
           {query ? (
-            <button onClick={() => setQuery("")} aria-label="Clear search" className="tap text-muted-foreground">
+            <Button variant="ghost" size="icon" onClick={() => setQuery("")} aria-label="Clear search" className="tap size-7 text-muted-foreground">
               <X className="size-4" />
-            </button>
+            </Button>
           ) : null}
         </div>
       </div>
@@ -152,18 +153,18 @@ function Home() {
           title="Filters"
           footer={
             <div className="flex gap-2">
-              <button
+              <Button variant="outline"
                 onClick={resetFilters}
                 className="tap h-12 flex-1 rounded-xl border border-input bg-background text-sm font-medium"
               >
                 Show everything
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={() => setSheetOpen(false)}
                 className="tap h-12 flex-[1.4] rounded-xl bg-primary text-sm font-semibold text-primary-foreground"
               >
                 Show {listings.length} result{listings.length === 1 ? "" : "s"}
-              </button>
+              </Button>
             </div>
           }
         >
@@ -172,7 +173,7 @@ function Home() {
             {LISTING_TYPES.map((t) => {
               const on = types.includes(t.id);
               return (
-                <button
+                <Button variant={on ? "secondary" : "outline"}
                   key={t.id}
                   onClick={() => toggleType(t.id)}
                   className={`tap flex w-full items-center gap-3 rounded-xl border px-3.5 py-3 text-sm transition-colors ${
@@ -187,7 +188,7 @@ function Home() {
                     {on ? <Check className="size-3.5" strokeWidth={3} /> : null}
                   </span>
                   {t.label}
-                </button>
+                </Button>
               );
             })}
           </div>
@@ -195,7 +196,7 @@ function Home() {
           <p className="chip-label mb-2 mt-6">City</p>
           <div className="flex flex-wrap gap-2">
             {CITIES.map((c) => (
-              <button
+              <Button variant={city === c ? "default" : "secondary"}
                 key={c}
                 onClick={() => setCity(c)}
                 className={`tap rounded-full px-3.5 py-2 text-xs font-medium transition-colors ${
@@ -203,7 +204,7 @@ function Home() {
                 }`}
               >
                 {c}
-              </button>
+              </Button>
             ))}
           </div>
 
@@ -214,7 +215,7 @@ function Home() {
               </p>
               <div className="flex flex-wrap gap-2">
                 {subOptions.map((o) => (
-                  <button
+                  <Button variant={subcategory === o ? "default" : "secondary"}
                     key={o}
                     onClick={() => setSubcategory(subcategory === o ? null : o)}
                     className={`tap rounded-full px-3.5 py-2 text-xs font-medium transition-colors ${
@@ -222,7 +223,7 @@ function Home() {
                     }`}
                   >
                     {o}
-                  </button>
+                  </Button>
                 ))}
               </div>
             </>
@@ -230,8 +231,8 @@ function Home() {
         </Sheet>
       }
     >
-      <div className="sticky top-0 z-20 border-b border-border/60 bg-background/85 backdrop-blur-xl">
-        <div className="flex gap-2 overflow-x-auto no-scrollbar px-4 py-2.5">
+      <div className="sticky top-0 z-20 border-b border-border/60 bg-paper/80 backdrop-blur-xl">
+        <div className="flex gap-2 overflow-x-auto no-scrollbar px-6 py-3">
           <Chip active={category === "all"} onClick={() => {
             setCategory("all");
             setSubcategory(null);
@@ -253,21 +254,21 @@ function Home() {
         </div>
       </div>
 
-      <div className="px-4 pt-4">
-        <h1 className="font-display text-2xl leading-tight">
-          {category === "all" ? "Learn from a master near you" : categoryLabel(category)}
+      <div className="px-6 pt-7">
+        <h1 className="font-display text-[25px] leading-snug">
+          {category === "all" ? "Discover your next class" : categoryLabel(category)}
         </h1>
-        <p className="mt-0.5 text-xs text-muted-foreground">
+        <p className="mt-2 text-sm text-muted-foreground">
           {isLoading
             ? "Loading the board…"
             : `${listings.length} class${listings.length === 1 ? "" : "es"} in ${city} and online`}
         </p>
       </div>
 
-      <div className="mt-3 flex items-center gap-2 px-4">
-        <button
+      <div className="mt-5 flex items-center gap-2 px-6">
+        <Button variant="outline"
           onClick={() => setSheetOpen(true)}
-          className="tap flex h-9 items-center gap-2 rounded-full border border-input bg-card px-3 text-xs font-medium"
+          className="tap flex h-9 items-center gap-2 rounded-full border border-input bg-paper/80 px-3 text-xs font-medium"
         >
           <SlidersHorizontal className="size-3.5" />
           Filters
@@ -276,21 +277,21 @@ function Home() {
               {activeFilters}
             </span>
           ) : null}
-        </button>
-        <button
+        </Button>
+        <Button variant="outline"
           onClick={() => setSheetOpen(true)}
-          className="tap flex h-9 items-center gap-1.5 rounded-full border border-input bg-card px-3 text-xs font-medium"
+          className="tap flex h-9 items-center gap-1.5 rounded-full border border-input bg-paper/80 px-3 text-xs font-medium"
         >
-          <MapPin className="size-3.5 text-clay" />
+          <MapPin className="size-3.5 text-primary" />
           {city}
           <ChevronDown className="size-3.5 text-muted-foreground" />
-        </button>
+        </Button>
       </div>
 
       {subOptions.length ? (
-        <div className="mt-3 flex gap-2 overflow-x-auto no-scrollbar px-4">
+        <div className="mt-3 flex gap-2 overflow-x-auto no-scrollbar px-6">
           {subOptions.map((o) => (
-            <button
+            <Button variant={subcategory === o ? "default" : "secondary"}
               key={o}
               onClick={() => setSubcategory(subcategory === o ? null : o)}
               className={`tap shrink-0 rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
@@ -300,12 +301,12 @@ function Home() {
               }`}
             >
               {o}
-            </button>
+            </Button>
           ))}
         </div>
       ) : null}
 
-      <div className="px-4 pt-4 pb-8">
+      <div className="px-6 pt-6 pb-8">
         {!isLoading && listings.length === 0 ? (
           <div className="surface-card p-8 text-center">
             <h2 className="font-display text-xl">Nothing here yet</h2>
@@ -320,10 +321,14 @@ function Home() {
             </Link>
           </div>
         ) : (
-          <div className="space-y-4">
-            {listings.map((l) => (
-              <ListingCard key={l.id} listing={l} />
-            ))}
+          <div className="space-y-6">
+            {listings[0] ? <div><p className="chip-label mb-3 text-primary">Featured on the board</p><ListingCard listing={listings[0]} /></div> : null}
+            {listings.length > 1 ? (
+              <div className="space-y-4">
+                <h2 className="font-display text-lg">More to explore</h2>
+                {listings.slice(1).map((l) => <ListingCard key={l.id} listing={l} />)}
+              </div>
+            ) : null}
           </div>
         )}
       </div>
@@ -341,13 +346,13 @@ function Chip({
   children: React.ReactNode;
 }) {
   return (
-    <button
+    <Button variant={active ? "default" : "secondary"}
       onClick={onClick}
       className={`tap shrink-0 rounded-full px-3.5 py-1.5 text-xs font-medium transition-colors ${
-        active ? "bg-foreground text-background" : "bg-secondary text-secondary-foreground"
+        active ? "bg-primary text-primary-foreground" : "bg-paper/70 text-secondary-foreground"
       }`}
     >
       {children}
-    </button>
+    </Button>
   );
 }
