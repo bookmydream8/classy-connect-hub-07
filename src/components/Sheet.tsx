@@ -1,5 +1,6 @@
 import { X } from "lucide-react";
 import type { ReactNode } from "react";
+import { Button } from "@/components/ui/button";
 
 interface SheetProps {
   open: boolean;
@@ -15,7 +16,8 @@ export function Sheet({ open, onClose, title, children, footer }: SheetProps) {
 
   return (
     <div className="absolute inset-0 z-50 flex flex-col justify-end">
-      <button
+      <Button
+        variant="ghost"
         aria-label="Close"
         onClick={onClose}
         className="animate-in fade-in-0 absolute inset-0 duration-200 bg-foreground/45 backdrop-blur-sm"
@@ -29,13 +31,14 @@ export function Sheet({ open, onClose, title, children, footer }: SheetProps) {
           <div className="mx-auto h-1 w-10 rounded-full bg-border" />
           <div className="mt-3 flex items-center justify-between gap-3">
             <h2 className="font-display text-xl">{title}</h2>
-            <button
+            <Button
+              variant="ghost"
               onClick={onClose}
               aria-label="Dismiss filters"
               className="tap grid size-8 place-items-center rounded-full bg-secondary text-muted-foreground"
             >
               <X className="size-4" />
-            </button>
+            </Button>
           </div>
         </div>
         <div className="max-h-[56dvh] overflow-y-auto px-4 py-4">{children}</div>
